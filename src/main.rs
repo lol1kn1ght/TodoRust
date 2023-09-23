@@ -1,5 +1,5 @@
 use dotenv::dotenv;
-use TodoRust::init;
+use todo_rust::init;
 
 #[tokio::main]
 async fn main() {

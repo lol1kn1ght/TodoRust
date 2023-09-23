@@ -2,14 +2,15 @@ pub mod commands;
 pub mod controllers;
 pub mod structs;
 
+use crate::controllers::slash_controller::Controller;
 use crate::structs::Commands;
 use commands::register;
+use serenity::async_trait;
 use serenity::client::{Context, EventHandler};
 use serenity::framework::standard::StandardFramework;
 use serenity::model::prelude::{GuildId, Interaction, InteractionResponseType, Message, Ready};
 use serenity::prelude::GatewayIntents;
 use serenity::Client;
-use serenity::{async_trait, http};
 use std::collections::HashMap;
 use std::env;
 
@@ -46,6 +47,8 @@ impl EventHandler for Handler {
 
         if let Interaction::ApplicationCommand(command) = interaction {
             println!("Responsing to an interaction");
+
+            Controller::handle_command(&command);
             let _ = command
                 .create_interaction_response(&ctx.http, |response| {
                     response

@@ -1,1 +1,1 @@
-pub mod SlashController;
+pub mod slash_controller;
