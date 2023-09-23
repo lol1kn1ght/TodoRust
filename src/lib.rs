@@ -2,14 +2,14 @@ pub mod commands;
 pub mod controllers;
 pub mod structs;
 
-use crate::structs::{Command, Commands};
+use crate::structs::Commands;
 use commands::register;
-use serenity::async_trait;
 use serenity::client::{Context, EventHandler};
 use serenity::framework::standard::StandardFramework;
-use serenity::model::prelude::{GuildId, Message, Ready};
+use serenity::model::prelude::{GuildId, Interaction, InteractionResponseType, Message, Ready};
 use serenity::prelude::GatewayIntents;
 use serenity::Client;
+use serenity::{async_trait, http};
 use std::collections::HashMap;
 use std::env;
 
@@ -40,10 +40,25 @@ impl EventHandler for Handler {
             }
         }
     }
+
+    async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
+        println!("Hello interaction");
+
+        if let Interaction::ApplicationCommand(command) = interaction {
+            println!("Responsing to an interaction");
+            let _ = command
+                .create_interaction_response(&ctx.http, |response| {
+                    response
+                        .kind(InteractionResponseType::ChannelMessageWithSource)
+                        .interaction_response_data(|message| message.content("Aboba"))
+                })
+                .await;
+        };
+    }
 }
 
 pub async fn init() {
-    let TOKEN: String = env::var("TOKEN").expect("TOKEN");
+    let token: String = env::var("TOKEN").expect("TOKEN");
     let mut map: Commands = HashMap::new();
 
     register(&mut map).await;
@@ -51,7 +66,7 @@ pub async fn init() {
     let framework = StandardFramework::new().configure(|c| c.prefix("!"));
 
     let intents = GatewayIntents::all();
-    let mut client = Client::builder(TOKEN, intents)
+    let mut client = Client::builder(token, intents)
         .event_handler(Handler)
         .framework(framework)
         .await
