@@ -1,6 +1,6 @@
 [package]
 
-name = "TodoRust"
+name = "todo_rust"
 version = "0.1.0"
 edition = "2021"
 description = 'My first pet-project on Rust'
